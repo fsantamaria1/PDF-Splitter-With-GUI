@@ -1,9 +1,25 @@
 from tkinter import ttk
 from tkinter import *
 from tkinter import filedialog
+from PyPDF2 import PdfFileWriter, PdfFileReader
 
 def donothing():
     pass
+def open_file():
+    # Get file path
+    file_path = filedialog.askopenfilename(initialdir = "~",
+                                    title = "Choose PDF File",
+                                    filetypes = [("PDF Files", "*.pdf")])
+    if file_path is not None:
+        file_path_label['text'] = file_path
+        total_pages = PdfFileReader(open(file_path, "rb"), strict=False).numPages
+        pages = [ i  for i in range(1, total_pages+1) ]
+        #Add page numbers to ComboBoxes
+        first_page_combobox.config(values=pages)
+        last_page_combobox.config(values=pages)
+        first_page_combobox.current(0)
+        last_page_combobox.current(0)
+
 
 def main_window():
     #Create Window
@@ -18,7 +34,7 @@ def main_window():
 
     #Create file menu
     file_menu = Menu(menu_bar, tearoff=0)
-    file_menu.add_command(label="Open", command=donothing)
+    file_menu.add_command(label="Open", command=open_file)
 
     #Create options menu
     options_menu = Menu(menu_bar, tearoff=0)
@@ -34,13 +50,16 @@ def main_window():
 
     #Create labels, buttons, textboxes,etc
     file_selection_label = Label(root, relief=FLAT, text="Selected File:")
+    global file_path_label
     file_path_label = Label(root, relief=GROOVE, text="N/A")
     page_selection_label = Label(root, relief=FLAT, text="Page Selection:")
     dash_label = Label(root, text="-")
+    global first_page_combobox
     first_page_combobox = ttk.Combobox(root, state="readonly", values=["..."], width=10)
+    global last_page_combobox
     last_page_combobox = ttk.Combobox(root, state="readonly", values=["..."], width=10)
-    save_file = Button(root, text="Save", command=donothing)
-    cancel = Button(root, text="Cancel", command=donothing)
+    save_button = Button(root, text="Save", command=donothing)
+    cancel_button = Button(root, text="Cancel", command=donothing)
 
     first_page_combobox.current(0)
     last_page_combobox.current(0)
@@ -53,9 +72,8 @@ def main_window():
     dash_label.grid(row=3, column=1, padx=15, sticky=W+E+N+S)
     last_page_combobox.grid(row=3, column=2, padx=15, sticky=W+E+N+S)
 
-    # save_file.grid(row=3, column=0, padx=15, pady=(15, 15), columnspan=3, sticky=W+E+N+S)
-    save_file.grid(row=4, column=0, padx=15, pady=(20, 15), columnspan=1, sticky=W+E+N+S)
-    cancel.grid(row=4, column=2, columnspan=1, padx=15, pady=(20, 15), sticky=W+E+N+S)
+    save_button.grid(row=4, column=0, padx=15, pady=(20, 15), columnspan=1, sticky=W+E+N+S)
+    cancel_button.grid(row=4, column=2, columnspan=1, padx=15, pady=(20, 15), sticky=W+E+N+S)
 
 
     root.mainloop()
