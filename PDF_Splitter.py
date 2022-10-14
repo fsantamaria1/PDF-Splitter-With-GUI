@@ -3,8 +3,7 @@ from tkinter import *
 from tkinter import filedialog
 from PyPDF2 import PdfFileWriter, PdfFileReader
 
-def donothing():
-    pass
+
 def open_file():
     # Get file path
     file_path = filedialog.askopenfilename(initialdir = "~",
@@ -45,6 +44,13 @@ def create_file():
             pdf_writer.addPage(pdf_reader.getPage(page))
         with open(file.name, 'wb') as file:
             pdf_writer.write(file)
+
+def cancel():
+    file_path_label['text'] = "N/A"
+    first_page_combobox.config(values=["..."])
+    last_page_combobox.config(values=["..."])
+    first_page_combobox.current(0)
+    last_page_combobox.current(0)
 
 def main_window():
     #Create Window
@@ -87,7 +93,7 @@ def main_window():
     global last_page_combobox
     last_page_combobox = ttk.Combobox(root, state="readonly", values=["..."], width=10)
     save_button = Button(root, text="Save", command=create_file)
-    cancel_button = Button(root, text="Cancel", command=donothing)
+    cancel_button = Button(root, text="Cancel", command=cancel)
 
     first_page_combobox.current(0)
     last_page_combobox.current(0)
