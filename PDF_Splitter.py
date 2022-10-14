@@ -20,15 +20,43 @@ def open_file():
         first_page_combobox.current(0)
         last_page_combobox.current(0)
 
+def create_file():
+    first_page = first_page_combobox.get()
+    last_page = last_page_combobox.get()
+
+    print("first: ", first_page)
+    print("last: ", last_page)
+    
+    if (first_page != "..."):
+        #First page has to be one number lower
+        first_page = int(first_page) - 1
+        last_page = int(last_page)
+
+        if (first_page <= last_page):
+            file = filedialog.asksaveasfile(initialdir = "~", 
+                                      title = "Save File", 
+                                      filetypes = [("PDF", "*.pdf")],
+                                      defaultextension=".pdf")
+        #Read original file
+        pdf_reader = PdfFileReader(open(file_path_label['text'], "rb"), strict=False)
+        #Create new pdf
+        pdf_writer = PdfFileWriter()
+        for page in range(first_page, last_page):
+            pdf_writer.addPage(pdf_reader.getPage(page))
+        with open(file.name, 'wb') as file:
+            pdf_writer.write(file)
 
 def main_window():
     #Create Window
     root = Tk()
     root.title("PDF Splitter")
+    
     root.resizable(width=False, height=False)
     #Center Window
     root.eval('tk::PlaceWindow . center')
 
+    # photo = PhotoImage(file='split.png')
+    root.wm_iconbitmap('split.ico')
     #Create menu bar
     menu_bar = Menu(root)
 
@@ -58,7 +86,7 @@ def main_window():
     first_page_combobox = ttk.Combobox(root, state="readonly", values=["..."], width=10)
     global last_page_combobox
     last_page_combobox = ttk.Combobox(root, state="readonly", values=["..."], width=10)
-    save_button = Button(root, text="Save", command=donothing)
+    save_button = Button(root, text="Save", command=create_file)
     cancel_button = Button(root, text="Cancel", command=donothing)
 
     first_page_combobox.current(0)
