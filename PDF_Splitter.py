@@ -2,8 +2,17 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import filedialog
 from PyPDF2 import PdfFileWriter, PdfFileReader
+import os
 
 
+
+# Breaks down a path into three parts (path, filename, and extension)
+def path_parser(path_with_file_name_and_extension):
+    complete_path = path_with_file_name_and_extension
+    path_only = os.path.dirname(complete_path)
+    file_name_with_extension = os.path.basename(complete_path)
+    filename, extension = os.path.splitext(file_name_with_extension)
+    return path_only, filename, extension
 def open_file():
     # Get file path
     file_path = filedialog.askopenfilename(initialdir = "~",
@@ -23,27 +32,36 @@ def create_file():
     first_page = first_page_combobox.get()
     last_page = last_page_combobox.get()
 
-    print("first: ", first_page)
-    print("last: ", last_page)
-    
     if (first_page != "..."):
         #First page has to be one number lower
         first_page = int(first_page) - 1
         last_page = int(last_page)
 
         if (first_page <= last_page):
-            file = filedialog.asksaveasfile(initialdir = "~", 
+            destination_path = filedialog.asksaveasfilename(initialdir = "~", 
                                       title = "Save File", 
                                       filetypes = [("PDF", "*.pdf")],
                                       defaultextension=".pdf")
         #Read original file
         pdf_reader = PdfFileReader(open(file_path_label['text'], "rb"), strict=False)
         #Create new pdf
-        pdf_writer = PdfFileWriter()
-        for page in range(first_page, last_page):
-            pdf_writer.addPage(pdf_reader.getPage(page))
-        with open(file.name, 'wb') as file:
-            pdf_writer.write(file)
+        #Multiple
+        if split_by_page.get():
+            path_only, file_name, extension = path_parser(destination_path)
+            for page in range(first_page, last_page):
+                pdf_writer = PdfFileWriter()
+                pdf_writer.addPage(pdf_reader.getPage(page))
+                path_file_and_name = path_only + "/" + file_name
+                complete_path = path_file_and_name + "_" + str(page+1) + extension
+                with open(complete_path, 'wb') as pdf_file:
+                    pdf_writer.write(pdf_file)
+        #Single file
+        else:
+            pdf_writer = PdfFileWriter()
+            for page in range(first_page, last_page):
+                pdf_writer.addPage(pdf_reader.getPage(page))
+            with open(destination_path, 'wb') as pdf_file:
+                pdf_writer.write(pdf_file)
 
 def cancel():
     file_path_label['text'] = "N/A"
@@ -73,6 +91,7 @@ def main_window():
     #Create options menu
     options_menu = Menu(menu_bar, tearoff=0)
     # Variable used by the checkbutton
+    global split_by_page
     split_by_page = BooleanVar()
     options_menu.add_checkbutton(label='Split by page', onvalue=1, offvalue=0, variable=split_by_page)
 
