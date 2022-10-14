@@ -65,11 +65,15 @@ def create_file():
         messagebox.showinfo(title="Completed", message="File created successfully")
 
 def cancel():
-    file_path_label['text'] = "N/A"
+    file_path_label['text'] = "Double click here"
+    split_by_page.set(False)
     first_page_combobox.config(values=["..."])
     last_page_combobox.config(values=["..."])
     first_page_combobox.current(0)
     last_page_combobox.current(0)
+
+def file_path_label_clicked(event):
+    open_file()
 
 def main_window():
     #Create Window
@@ -105,7 +109,7 @@ def main_window():
     #Create labels, buttons, textboxes,etc
     file_selection_label = Label(root, relief=FLAT, text="Selected File:")
     global file_path_label
-    file_path_label = Label(root, relief=GROOVE, text="N/A")
+    file_path_label = Label(root, relief=GROOVE, text="Double click here", background="white")
     page_selection_label = Label(root, relief=FLAT, text="Page Selection:")
     dash_label = Label(root, text="-")
     global first_page_combobox
@@ -131,6 +135,7 @@ def main_window():
     save_button.grid(row=5, column=0, padx=15, pady=(10, 15), columnspan=1, sticky=W+E+N+S)
     cancel_button.grid(row=5, column=2, columnspan=1, padx=15, pady=(10, 15), sticky=W+E+N+S)
 
+    file_path_label.bind("<Double-Button>", file_path_label_clicked)
 
     root.mainloop()
 
