@@ -24,7 +24,7 @@ def open_file():
     file_path = filedialog.askopenfilename(initialdir = "~",
                                     title = "Choose PDF File",
                                     filetypes = [("PDF Files", "*.pdf")])
-    if file_path is not None:
+    if (file_path is not None) and (file_path !=""):
         file_path_label['text'] = file_path
         total_pages = PdfFileReader(open(file_path, "rb"), strict=False).numPages
         pages = [ i  for i in range(1, total_pages+1) ]
@@ -114,6 +114,7 @@ def main_window():
     last_page_combobox = ttk.Combobox(root, state="readonly", values=["..."], width=10)
     save_button = Button(root, text="Save", command=create_file)
     cancel_button = Button(root, text="Cancel", command=cancel)
+    split_by_page_check_box = ttk.Checkbutton(root, text="Create one document per page", onvalue=1, offvalue=0, variable=split_by_page)
 
     first_page_combobox.current(0)
     last_page_combobox.current(0)
@@ -126,8 +127,9 @@ def main_window():
     dash_label.grid(row=3, column=1, padx=15, sticky=W+E+N+S)
     last_page_combobox.grid(row=3, column=2, padx=15, sticky=W+E+N+S)
 
-    save_button.grid(row=4, column=0, padx=15, pady=(20, 15), columnspan=1, sticky=W+E+N+S)
-    cancel_button.grid(row=4, column=2, columnspan=1, padx=15, pady=(20, 15), sticky=W+E+N+S)
+    split_by_page_check_box.grid(row=4, column=0, columnspan=3, padx=15, pady=(10, 10), sticky=W+E+N+S)
+    save_button.grid(row=5, column=0, padx=15, pady=(10, 15), columnspan=1, sticky=W+E+N+S)
+    cancel_button.grid(row=5, column=2, columnspan=1, padx=15, pady=(10, 15), sticky=W+E+N+S)
 
 
     root.mainloop()
