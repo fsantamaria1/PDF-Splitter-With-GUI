@@ -1,6 +1,6 @@
 from tkinter import ttk
 from tkinter import *
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import os
 
@@ -61,6 +61,8 @@ def create_file():
         #Single file
         else:
             create_pdf(pdf_reader, destination_path, first_page, last_page)
+        #Message box to notify user that the file has been created
+        messagebox.showinfo(title="Completed", message="File created successfully")
 
 def cancel():
     file_path_label['text'] = "N/A"
