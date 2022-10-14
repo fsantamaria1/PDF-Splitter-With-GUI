@@ -5,6 +5,12 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 import os
 
 
+def create_pdf(input_pdf, new_file_path, first_page, last_page):
+    pdf_writer = PdfFileWriter()
+    for page in range(first_page, last_page):
+        pdf_writer.addPage(input_pdf.getPage(page))
+    with open(new_file_path, 'wb') as pdf_file:
+        pdf_writer.write(pdf_file)
 
 # Breaks down a path into three parts (path, filename, and extension)
 def path_parser(path_with_file_name_and_extension):
@@ -49,19 +55,12 @@ def create_file():
         if split_by_page.get():
             path_only, file_name, extension = path_parser(destination_path)
             for page in range(first_page, last_page):
-                pdf_writer = PdfFileWriter()
-                pdf_writer.addPage(pdf_reader.getPage(page))
                 path_file_and_name = path_only + "/" + file_name
                 complete_path = path_file_and_name + "_" + str(page+1) + extension
-                with open(complete_path, 'wb') as pdf_file:
-                    pdf_writer.write(pdf_file)
+                create_pdf(pdf_reader, complete_path, page, page+1)
         #Single file
         else:
-            pdf_writer = PdfFileWriter()
-            for page in range(first_page, last_page):
-                pdf_writer.addPage(pdf_reader.getPage(page))
-            with open(destination_path, 'wb') as pdf_file:
-                pdf_writer.write(pdf_file)
+            create_pdf(pdf_reader, destination_path, first_page, last_page)
 
 def cancel():
     file_path_label['text'] = "N/A"
