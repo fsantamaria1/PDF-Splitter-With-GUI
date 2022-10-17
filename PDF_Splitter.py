@@ -42,27 +42,31 @@ def create_file():
         #First page has to be one number lower
         first_page = int(first_page) - 1
         last_page = int(last_page)
+        #Initialze the destination path
+        destination_path = ""
 
         if (first_page <= last_page):
             destination_path = filedialog.asksaveasfilename(initialdir = "~", 
                                       title = "Save File", 
                                       filetypes = [("PDF", "*.pdf")],
                                       defaultextension=".pdf")
-        #Read original file
-        pdf_reader = PdfFileReader(open(file_path_label['text'], "rb"), strict=False)
-        #Create new pdf
-        #Multiple
-        if split_by_page.get():
-            path_only, file_name, extension = path_parser(destination_path)
-            for page in range(first_page, last_page):
-                path_file_and_name = path_only + "/" + file_name
-                complete_path = path_file_and_name + "_" + str(page+1) + extension
-                create_pdf(pdf_reader, complete_path, page, page+1)
-        #Single file
-        else:
-            create_pdf(pdf_reader, destination_path, first_page, last_page)
-        #Message box to notify user that the file has been created
-        messagebox.showinfo(title="Completed", message="File created successfully")
+        # Does not do anything if the destination path is empty
+        if destination_path != "":
+            #Read original file
+            pdf_reader = PdfFileReader(open(file_path_label['text'], "rb"), strict=False)
+            #Create new pdf
+            #Multiple
+            if split_by_page.get():
+                path_only, file_name, extension = path_parser(destination_path)
+                for page in range(first_page, last_page):
+                    path_file_and_name = path_only + "/" + file_name
+                    complete_path = path_file_and_name + "_" + str(page+1) + extension
+                    create_pdf(pdf_reader, complete_path, page, page+1)
+            #Single file
+            else:
+                create_pdf(pdf_reader, destination_path, first_page, last_page)
+            #Message box to notify user that the file has been created
+            messagebox.showinfo(title="Completed", message="File created successfully")
 
 def cancel():
     file_path_label['text'] = "Double click here"
